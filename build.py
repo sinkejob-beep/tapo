@@ -1,12 +1,12 @@
 import base64, pathlib, sys
 root = pathlib.Path(__file__).parent
-out = sys.argv[1] if len(sys.argv) > 1 else "job-tapout-application.html"
+out = sys.argv[1] if len(sys.argv) > 1 else "public/index.html"
 src = (root / "src.html").read_text()
 # screenshots ship as separate full-resolution files next to the page
 for name in ["licensees", "bases", "zones", "onb_form", "onb_wizard", "onb_list", "onb_timeline", "mkt_schedule", "mkt_leadtime", "mkt_trends"]:
     key = f"__IMG_{name.upper()}__"
     assert src.count(key) == 1, key
-    assert (root / "shots" / f"{name}.webp").exists(), name
+    assert (root / "public" / "shots" / f"{name}.webp").exists(), name
     src = src.replace(key, f"shots/{name}.webp")
 # small assets stay inline
 src = src.replace("__IMG_JOB__", "data:image/jpeg;base64," + base64.b64encode((root / "img" / "job.jpg").read_bytes()).decode())

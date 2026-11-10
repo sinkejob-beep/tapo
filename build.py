@@ -13,5 +13,11 @@ src = src.replace("__IMG_JOB__", "data:image/jpeg;base64," + base64.b64encode((r
 for key, f in [("__FONT_DENTON__", "denton.woff2"), ("__FONT_IS_N__", "is-n.woff2"), ("__FONT_IS_I__", "is-i.woff2")]:
     assert src.count(key) == 1, key
     src = src.replace(key, "data:font/woff2;base64," + base64.b64encode((root / "fonts" / f).read_bytes()).decode())
-(root / out).write_text(src)
+# a standalone page (not the artifact viewer) needs its own document head
+if out.endswith("index.html"):
+    src = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+           '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+           '<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n'
+           '</head>\n<body>\n' + src + '\n</body>\n</html>\n')
+(root / out).write_text(src, encoding="utf-8")
 print("built", out, len(src) // 1024, "KB")
